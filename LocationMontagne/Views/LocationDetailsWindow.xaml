@@ -1,0 +1,178 @@
+﻿<Window x:Class="LocationMontagne.Views.LocationDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocationMontagne.Views"
+        xmlns:services="clr-namespace:LocationMontagne.Services"
+        mc:Ignorable="d"
+        Title="Détails de la Location" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundColor}">
+
+    <Window.Resources>
+        <services:ImageConverter x:Key="ImageConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
+               Background="{StaticResource SurfaceColor}" Margin="20"
+               CornerRadius="{StaticResource CornerRadiusMedium}">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- En-tête -->
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Détails de la Location" FontSize="{StaticResource FontSizeXLarge}" 
+                             FontWeight="SemiBold" Foreground="{StaticResource PrimaryColor}"
+                             Margin="0,0,0,20"/>
+
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Numéro de location et date -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Numéro de location :" 
+                                 FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="LocationNumberText" 
+                                 Text="N/A" Margin="0,0,0,8"/>
+
+                        <!-- Dates -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Date de réservation :" 
+                                 FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="ReservationDateText" 
+                                 Text="N/A" Margin="0,0,0,8"/>
+
+                        <!-- Période -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Période de location :" 
+                                 FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="PeriodText" 
+                                 Text="N/A" Margin="0,0,0,8"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Informations client -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Client :" 
+                                 FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="ClientText" 
+                                 Text="N/A" Margin="0,0,0,8"/>
+
+                        <!-- État -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="État :" 
+                                 FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <Border Grid.Row="1" Grid.Column="1" x:Name="EtatBorder" 
+                              Background="{StaticResource PrimaryColor}" 
+                              CornerRadius="4" Padding="8,4" 
+                              HorizontalAlignment="Left">
+                            <TextBlock x:Name="EtatText" 
+                                     Text="N/A" 
+                                     Foreground="White" 
+                                     FontWeight="SemiBold"/>
+                        </Border>
+
+                        <!-- Total -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Montant total :" 
+                                 FontWeight="SemiBold" Margin="0,8,0,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TotalText" 
+                                 Text="N/A" Foreground="{StaticResource SecondaryColor}" 
+                                 FontWeight="SemiBold" Margin="0,8,0,0"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Informations additionnelles -->
+                <TextBlock Grid.Row="1" Text="Articles loués" 
+                         FontSize="{StaticResource FontSizeLarge}" 
+                         FontWeight="SemiBold" 
+                         Margin="0,0,0,16"/>
+
+                <!-- Liste des articles -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="ArticlesItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{StaticResource BorderColor}" 
+                                      BorderThickness="1" Margin="0,0,0,12" 
+                                      CornerRadius="{StaticResource CornerRadiusSmall}" 
+                                      Padding="12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Image de l'article -->
+                                        <Border Grid.Column="0" Width="80" Height="80" 
+                                              BorderBrush="{StaticResource BorderColor}" 
+                                              BorderThickness="1" 
+                                              CornerRadius="{StaticResource CornerRadiusSmall}" 
+                                              Background="White">
+                                            <Image Source="{Binding article.image, Converter={StaticResource ImageConverter}}" 
+                                                 Stretch="Uniform" Margin="5"/>
+                                        </Border>
+
+                                        <!-- Détails de l'article -->
+                                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <TextBlock Text="{Binding article.nomArticle}" 
+                                                     FontWeight="SemiBold" 
+                                                     FontSize="{StaticResource FontSizeMedium}" 
+                                                     Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding article.description}" 
+                                                     TextWrapping="Wrap" 
+                                                     Margin="0,0,0,8"/>
+                                            <TextBlock Text="{Binding article.categorie.nomCategorie}" 
+                                                     Foreground="{StaticResource TextSecondaryColor}"/>
+                                        </StackPanel>
+
+                                        <!-- Prix et quantité -->
+                                        <StackPanel Grid.Column="2" Margin="12,0,0,0" 
+                                                  VerticalAlignment="Center" 
+                                                  HorizontalAlignment="Right">
+                                            <TextBlock FontWeight="SemiBold" 
+                                                     Foreground="{StaticResource SecondaryColor}">
+                                                <Run Text="{Binding article.tarif, Mode=OneWay}"/>
+                                                <Run Text="€"/>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding quantite, StringFormat=Quantité: {0}}" 
+                                                     Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Bouton Fermer -->
+                <Button Grid.Row="3" Content="Fermer" 
+                      Style="{StaticResource PrimaryButtonStyle}" 
+                      Width="120" Height="40" 
+                      Margin="0,20,0,0" 
+                      HorizontalAlignment="Center" 
+                      Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,358 @@
+﻿<Window x:Class="LocationMontagne.Views.EmployeeLocationsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocationMontagne.Views"
+        xmlns:services="clr-namespace:LocationMontagne.Services"
+        mc:Ignorable="d"
+        Title="Dashboard Employé - Location Montagne" Height="900" Width="1400" 
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundColor}">
+
+    <Window.Resources>
+        <services:ImageConverter x:Key="ImageConverter"/>
+
+        <Style x:Key="DataGridActionButtonStyle" TargetType="Button" BasedOn="{StaticResource OutlineButtonStyle}">
+            <Setter Property="Width" Value="110"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="FilterButtonStyle" TargetType="Button" BasedOn="{StaticResource OutlineButtonStyle}">
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="ActiveFilterButtonStyle" TargetType="Button" BasedOn="{StaticResource FilterButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+        </Style>
+
+        <!-- Style pour les lignes du DataGrid avec effet hover -->
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource DividerColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Border Height="64" VerticalAlignment="Top" Background="{StaticResource PrimaryColor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="32,0,0,0">
+                    <TextBlock Text="🏔️" FontSize="24" VerticalAlignment="Center" Margin="0,0,16,0" Foreground="White"/>
+                    <TextBlock Text="Dashboard Employé - Gestion locations" 
+                             Foreground="White" 
+                             FontSize="{StaticResource FontSizeXLarge}" 
+                             FontWeight="SemiBold"
+                             VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                      Content="Déconnexion" 
+                      Style="{StaticResource DangerButtonStyle}"
+                      Width="140" Height="40"
+                      Margin="0,0,32,0"
+                      Click="Deconnexion_Click"/>
+            </Grid>
+        </Border>
+
+        <Border Width="240" HorizontalAlignment="Left" Margin="0,64,0,0" 
+              Background="{StaticResource SurfaceColor}"
+              BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0">
+            <StackPanel Margin="0,24,0,0">
+                <TextBlock Text="GESTION" 
+                         Foreground="{StaticResource TextSecondaryColor}"
+                         FontWeight="SemiBold"
+                         Margin="24,0,0,16"/>
+
+                <Border Background="Transparent" Margin="12,0,12,8" CornerRadius="{StaticResource CornerRadiusMedium}" 
+                      MouseLeftButtonDown="ArticlesNav_MouseLeftButtonDown" Cursor="Hand">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource DividerColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Orientation="Horizontal" Margin="12,12">
+                        <TextBlock Text="📦" FontSize="18" Margin="0,0,12,0" Foreground="{StaticResource TextPrimaryColor}"/>
+                        <TextBlock Text="Articles" 
+                                 Foreground="{StaticResource TextPrimaryColor}"
+                                 FontWeight="Medium"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource PrimaryColor}" Margin="12,0,12,8" CornerRadius="{StaticResource CornerRadiusMedium}">
+                    <StackPanel Orientation="Horizontal" Margin="12,12">
+                        <TextBlock Text="📅" FontSize="18" Margin="0,0,12,0" Foreground="White"/>
+                        <TextBlock Text="Locations" 
+                                 Foreground="White"
+                                 FontWeight="Medium"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="240,64,0,0">
+            <Border Height="80" VerticalAlignment="Top" 
+                  Background="{StaticResource SurfaceColor}"
+                  BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1">
+                <Grid Margin="32,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" 
+                             Text="Gestion des Locations" 
+                             FontSize="{StaticResource FontSizeLarge}" 
+                             FontWeight="SemiBold"
+                             VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Filtrer par état:" 
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,16,0"/>
+                        <ComboBox x:Name="EtatComboBox" 
+                                Width="240" Height="40"
+                                Style="{StaticResource ComboBoxStyle}"
+                                SelectionChanged="EtatComboBox_SelectionChanged">
+                            <ComboBoxItem Content="Tous les états"/>
+                            <ComboBoxItem Content="Payée"/>
+                            <ComboBoxItem Content="En cours"/>
+                            <ComboBoxItem Content="Retournée"/>
+                            <ComboBoxItem Content="Annulée"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Text="Filtre date:" 
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,8,0"/>
+                        <Button x:Name="WeekButton" 
+                              Content="7 jours" 
+                              Width="80"
+                              Style="{StaticResource FilterButtonStyle}"
+                              Click="WeekFilter_Click"/>
+
+                        <Button x:Name="MonthButton" 
+                              Content="30 jours" 
+                              Width="80"
+                              Style="{StaticResource FilterButtonStyle}"
+                              Click="MonthFilter_Click"/>
+
+                        <Button x:Name="AllButton" 
+                              Content="Toutes" 
+                              Width="80"
+                              Style="{StaticResource ActiveFilterButtonStyle}"
+                              Click="AllFilter_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Margin="32,104,32,32" 
+                  Background="{StaticResource SurfaceColor}"
+                  BorderBrush="{StaticResource BorderColor}" 
+                  BorderThickness="1"
+                  CornerRadius="{StaticResource CornerRadiusMedium}">
+                <DataGrid x:Name="LocationsDataGrid" 
+                        Style="{StaticResource DataGridStyle}"
+                        AutoGenerateColumns="False" 
+                        CanUserAddRows="False"
+                        BorderThickness="0"
+                        IsReadOnly="True"
+                        RowStyle="{StaticResource DataGridRowStyle}"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow"
+                        MouseDoubleClick="LocationsDataGrid_MouseDoubleClick">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding idLocation}" Width="60">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Client" Width="120">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="user.prenom"/>
+                                    <Binding Path="user.nom"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Date Réservation" Binding="{Binding dateLocation, StringFormat=dd/MM/yyyy}" Width="130">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Date Début" Binding="{Binding dateDebutLocation, StringFormat=dd/MM/yyyy}" Width="120">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Date Fin" Binding="{Binding dateFinLocation, StringFormat=dd/MM/yyyy}" Width="120">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTemplateColumn Header="État" Width="120">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          CornerRadius="4" Padding="8,4">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="Payée">
+                                                        <Setter Property="Background" Value="{StaticResource SuccessColor}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="En cours">
+                                                        <Setter Property="Background" Value="{StaticResource InfoColor}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="Retournée">
+                                                        <Setter Property="Background" Value="{StaticResource SecondaryColor}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="Annulée">
+                                                        <Setter Property="Background" Value="{StaticResource DangerColor}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="En attente de paiement">
+                                                        <Setter Property="Background" Value="{StaticResource WarningColor}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding etatLocation.nomEtatLocation}" 
+                                                 Foreground="White" 
+                                                 FontWeight="SemiBold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="Montant" Width="120">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="facture.montant">
+                                    <Binding.StringFormat>{0:C}</Binding.StringFormat>
+                                    <Binding.ConverterCulture>fr-FR</Binding.ConverterCulture>
+                                </Binding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+
+                        <DataGridTemplateColumn Header="Actions" Width="250">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyle}"/>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <!-- Bouton Marquer Retourné avec visibilité conditionnelle via DataTrigger -->
+                                        <Button Content="Marquer Retourné" 
+                                              Click="MarquerRetourne_Click" 
+                                              Background="{StaticResource SuccessColor}" 
+                                              Foreground="White"
+                                              Margin="0,0,4,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource DataGridActionButtonStyle}">
+                                                    <Setter Property="Background" Value="{StaticResource SuccessColor}"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="Retournée">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding etatLocation.nomEtatLocation}" Value="Annulée">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Content="Détails" 
+                                              Style="{StaticResource DataGridActionButtonStyle}" 
+                                              Click="VoirDetails_Click" 
+                                              Background="{StaticResource PrimaryColor}" 
+                                              Foreground="White"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

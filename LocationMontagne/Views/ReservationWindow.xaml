@@ -1,0 +1,128 @@
+﻿<Window x:Class="LocationMontagne.Views.ReservationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocationMontagne.Views"
+        mc:Ignorable="d"
+        Title="Mes Réservations - Location Montagne" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundColor}">
+
+    <Window.Resources>
+        <Style x:Key="FilterButtonStyle" TargetType="Button" BasedOn="{StaticResource OutlineButtonStyle}">
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+        </Style>
+
+        <Style x:Key="ActiveFilterButtonStyle" TargetType="Button" BasedOn="{StaticResource FilterButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+        </Style>
+
+        <Style x:Key="ReservationCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Border Height="64" VerticalAlignment="Top" Background="{StaticResource PrimaryColor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                         Text="Mes Réservations" 
+                         Foreground="White" 
+                         FontSize="{StaticResource FontSizeXLarge}" 
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center"
+                         Margin="32,0"/>
+
+                <Button Grid.Column="1"
+                      Content="Retour à l'accueil"
+                      Style="{StaticResource SecondaryButtonStyle}"
+                      Width="160" Height="40"
+                      Margin="0,0,32,0"
+                      Click="RetourButton_Click"/>
+            </Grid>
+        </Border>
+
+        <Grid Margin="0,64,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="{StaticResource SurfaceColor}"
+                  BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1">
+                <Grid Margin="32,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock Text="Filtrer par période :" 
+                                 VerticalAlignment="Center"
+                                 FontWeight="Medium"
+                                 Margin="0,0,16,0"/>
+
+                        <Button x:Name="WeekButton" 
+                              Content="Semaine" 
+                              Style="{StaticResource FilterButtonStyle}"
+                              Click="WeekFilter_Click"/>
+
+                        <Button x:Name="MonthButton" 
+                              Content="Mois" 
+                              Style="{StaticResource FilterButtonStyle}"
+                              Click="MonthFilter_Click"/>
+
+                        <Button x:Name="YearButton" 
+                              Content="Année" 
+                              Style="{StaticResource FilterButtonStyle}"
+                              Click="YearFilter_Click"/>
+
+                        <Button x:Name="AllButton" 
+                              Content="Toutes" 
+                              Style="{StaticResource ActiveFilterButtonStyle}"
+                              Click="AllFilter_Click"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Text="État :" 
+                                 VerticalAlignment="Center"
+                                 FontWeight="Medium"
+                                 Margin="0,0,16,0"/>
+
+                        <ComboBox x:Name="StateFilter" 
+                                Width="180" Height="36"
+                                Style="{StaticResource ComboBoxStyle}"
+                                SelectionChanged="StateFilter_SelectionChanged">
+                            <ComboBoxItem Content="Tous les états"/>
+                            <ComboBoxItem Content="Payée"/>
+                            <ComboBoxItem Content="En cours"/>
+                            <ComboBoxItem Content="Retournée"/>
+                            <ComboBoxItem Content="Annulée"/>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" Margin="32,24" VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="ReservationsPanel">
+                    <!-- Ajout des cards ici via le xaml.cs -->
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>
